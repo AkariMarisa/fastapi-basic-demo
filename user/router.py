@@ -8,7 +8,7 @@ from security import get_payload
 from user.schema import UserSchema
 from user.service import get_user_by_id
 
-router = APIRouter(prefix="/user", tags=["user"])
+router = APIRouter(prefix="/user", tags=["user"], dependencies=[Depends(get_payload)])
 
 
 @router.get("/")
