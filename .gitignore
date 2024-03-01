@@ -1,0 +1,7 @@
+.idea/
+__pycache__/
+.venv/
+logs/
+.directory
+http-client.env.json
+test_main.http
