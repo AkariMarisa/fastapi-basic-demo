@@ -126,10 +126,6 @@ async def refresh_tokens(
     if refresh_token is None or refresh_token.strip() == "":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="刷新凭证错误")
 
-    # 验证refresh_token是否已经被使用过
-    if not security.check_refresh_token_cache(refresh_token):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="刷新凭证已被使用，请重新登陆")
-
     # 如果refresh_token过期，则直接提醒用户重新登陆
     try:
         security.get_payload(refresh_token)
@@ -141,6 +137,10 @@ async def refresh_tokens(
 
     payload: dict = security.get_payload(access_token, verify_exp=False)
     user_id = payload.get("sub")
+
+    # 验证refresh_token是否已经被使用过
+    if not security.check_refresh_token_cache(user_id):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="刷新凭证已被使用，请重新登陆")
 
     # 验证用户ID是否存在
     user = await get_user_by_id(db, user_id)
